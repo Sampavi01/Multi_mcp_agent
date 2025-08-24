@@ -48,29 +48,58 @@ st.set_page_config(page_title="MCP Chat", page_icon="🤖", layout="centered")
 st.markdown(
     """
     <style>
-    body {
-        background-color: #000000;
-        color: #ffffff;
-    }
-    .stTextInput>div>div>input {
-        background-color: #222222;
-        color: #ffffff;
-    }
+    body { background-color: #000000; color: #ffffff; }
+    .stTextInput>div>div>input { background-color: #222222; color: #ffffff; }
+    .chat-box { max-height: 500px; overflow-y: auto; padding: 10px; border-radius: 10px; }
+    .user-msg { background-color: #111111; color: #00ff00; padding: 10px; border-radius: 10px; margin-bottom: 5px; }
+    .ai-msg { background-color: #222222; color: #00ffff; padding: 10px; border-radius: 10px; margin-bottom: 5px; }
     </style>
     """, unsafe_allow_html=True
 )
 
-st.title("🌟 MCP Multi-Agent Chat")
+st.title("🌟 MCP Multi-Agent Chat ")
 
-user_input = st.text_input("Enter your query:")
-
+# Initialize agent
 if "agent_obj" not in st.session_state:
     st.session_state.agent_obj = asyncio.run(init_agent())
 
-if user_input:
+# Initialize chat history
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# Input form that automatically resets
+with st.form("chat_form", clear_on_submit=True):
+    col1, col2 = st.columns([4, 1])
+    with col1:
+        user_input = st.text_input("Enter your query:", placeholder="Ask me anything...")
+    with col2:
+        submit_button = st.form_submit_button("Send", type="primary")
+
+# Process when form is submitted
+if submit_button and user_input:
+    # Append user message
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+
+    # Get AI answer
     with st.spinner("🤖 Thinking..."):
         answer = asyncio.run(get_answer(st.session_state.agent_obj, user_input))
-    st.markdown(
-        f"<div style='padding:15px; background-color:#111111; color:#00ff00; border-radius:10px;'>{answer}</div>",
-        unsafe_allow_html=True
-    )
+    st.session_state.chat_history.append({"role": "ai", "content": answer})
+    
+    # Rerun to refresh the page
+    st.rerun()
+
+# Display chat history
+if st.session_state.chat_history:
+    st.markdown("### 💬 Chat History")
+    for msg in st.session_state.chat_history:
+        if msg["role"] == "user":
+            st.markdown(f"<div class='user-msg'>👤 You: {msg['content']}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='ai-msg'>🤖 AI: {msg['content']}</div>", unsafe_allow_html=True)
+    
+    # Clear chat button
+    if st.button("🗑️ Clear Chat"):
+        st.session_state.chat_history = []
+        st.rerun()
+else:
+    st.info("💡 Start a conversation by typing a message and clicking Send!")
