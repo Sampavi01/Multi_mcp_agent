@@ -1,7 +1,8 @@
 from mcp.server.fastmcp import FastMCP
 import aiohttp
 import os
-
+from dotenv import load_dotenv
+load_dotenv()
 # Get your OpenWeatherMap API key from environment variables for safety
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
