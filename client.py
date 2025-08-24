@@ -15,8 +15,6 @@ from langchain_groq import ChatGroq
 
 from dotenv import load_dotenv
 load_dotenv()
-print("Weather API key:", os.getenv("OPENWEATHER_API_KEY"))
-
 import asyncio
 
 async def main():
@@ -58,9 +56,14 @@ async def main():
 
         query = {"messages": [{"role": "user", "content": user_input}]}
         async for chunk in agent.astream(query):
-            print("--- Next Step ---")
-            pprint.pprint(chunk)
-            print("\n")
+            # If agent returned a message
+            if "agent" in chunk and "messages" in chunk["agent"]:
+                for msg in chunk["agent"]["messages"]:
+                    print(msg.content)
+            # If a tool returned a message
+            elif "tools" in chunk and "messages" in chunk["tools"]:
+                for msg in chunk["tools"]["messages"]:
+                    print(msg.content)
 
 
 if __name__ == "__main__":
