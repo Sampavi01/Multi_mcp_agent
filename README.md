@@ -7,6 +7,10 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.48+-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<div align="center">
+  <img src="ezgif.com-crop.gif" alt="MCP Multi-Agent Server Demo" width="600" />
+</div>
+
 
 ## ✨ Features
 
@@ -30,8 +34,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd mcp-server
+   git clone https://github.com/Sampavi01/Multi_mcp_agent.git
+   cd MCP SERVER
    ```
 
 2. **Create and activate virtual environment**
