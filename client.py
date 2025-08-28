@@ -67,16 +67,10 @@ if "agent_obj" not in st.session_state:
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Input form that automatically resets
-with st.form("chat_form", clear_on_submit=True):
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        user_input = st.text_input("Enter your query:", placeholder="Ask me anything...")
-    with col2:
-        submit_button = st.form_submit_button("Send", type="primary")
+# --- Continuous chatbot input ---
+user_input = st.chat_input("Enter your query...")
 
-# Process when form is submitted
-if submit_button and user_input:
+if user_input:
     # Append user message
     st.session_state.chat_history.append({"role": "user", "content": user_input})
 
@@ -84,8 +78,6 @@ if submit_button and user_input:
     with st.spinner("🤖 Thinking..."):
         answer = asyncio.run(get_answer(st.session_state.agent_obj, user_input))
     st.session_state.chat_history.append({"role": "ai", "content": answer})
-    
-    # Rerun to refresh the page
     st.rerun()
 
 # Display chat history
@@ -102,4 +94,4 @@ if st.session_state.chat_history:
         st.session_state.chat_history = []
         st.rerun()
 else:
-    st.info("💡 Start a conversation by typing a message and clicking Send!")
+    st.info("💡 Start a conversation by typing a message below!")
